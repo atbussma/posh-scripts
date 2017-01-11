@@ -40,7 +40,11 @@ PROCESS {
     $newLineSeparator = "^^*^^";
     $gitCmdFormat = "$beginRecordSeparator %an $columnSeparator %H $columnSeparator %h $columnSeparator %ad $columnSeparator %s $endFormatLineSeparator";
 
-    $result = git log --decorate --pretty=format:"$gitCmdFormat" $StartCommit^..$EndCommit
+    $result = git log --decorate --pretty=format:"$gitCmdFormat" ^$StartCommit $EndCommit
+    if ($result -eq $null) {
+        Write-Warning "Commit range not found";
+        return history;
+    }
     $results = $result.Split($beginRecordSeparator, [StringSplitOptions]::RemoveEmptyEntries);
 
     $results | % {
